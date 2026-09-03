@@ -585,12 +585,6 @@
     <div class="eyebrow" style="color:#456E65">Donor Wall</div>
     <h2>With Gratitude</h2>
     <p class="lead">We're proud to recognize the donors who make this mission possible. Every gift matters – whether it's celebrated here by name or given quietly and anonymously.</p>
-    <div class="donor-tiers-key">
-      <span><strong>Supporter</strong> Any amount – no minimum</span>
-      <span><strong>Friend</strong> $25+</span>
-      <span><strong>Champion</strong> $100+</span>
-      <span><strong>Guardian</strong> $500+</span>
-    </div>
     <div id="donor-wall-content">
       <div class="donor-wall-empty">
         <p>Loading our donor wall…</p>
@@ -618,20 +612,11 @@
       container.innerHTML = '<div class="donor-wall-empty"><p>Our donor wall is just getting started – be one of the first names to appear here.</p></div>';
       return;
     }
-    const byTier = {};
-    donors.forEach(function(d) {
-      if (!byTier[d.tier]) byTier[d.tier] = [];
-      byTier[d.tier].push(d.shown_name);
+    donors.sort(function(a, b) {
+      return TIER_ORDER.indexOf(a.tier) - TIER_ORDER.indexOf(b.tier);
     });
-    let html = '';
-    TIER_ORDER.forEach(function(tier) {
-      if (byTier[tier] && byTier[tier].length) {
-        html += '<div class="donor-tier-group"><h4>' + tier + '</h4><div class="donor-names">';
-        html += byTier[tier].map(function(n) { return '<span>' + n.replace(/</g, '&lt;') + '</span>'; }).join('<span style="opacity:0.4">&middot;</span>');
-        html += '</div></div>';
-      }
-    });
-    container.innerHTML = html;
+    const names = donors.map(function(d) { return '<span>' + d.shown_name.replace(/</g, '&lt;') + '</span>'; });
+    container.innerHTML = '<div class="donor-names">' + names.join('<span style="opacity:0.4">&middot;</span>') + '</div>';
   })
   .catch(function() {
     const container = document.getElementById('donor-wall-content');
